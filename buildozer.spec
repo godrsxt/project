@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = 1st
+title = mOnkeytype
 
 # (str) Package name
-package.name = app
+package.name = apptype
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = com.org
+package.domain = com.type
 
 # (str) Source code where the main.py live
 source.dir = .
