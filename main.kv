@@ -1,123 +1,29 @@
-# Root container: BoxLayout for vertical arrangement
-BoxLayout:
+<TypingTest>:
     orientation: 'vertical'
-    padding: 10
+    padding: 20
     spacing: 10
 
-    # Header Label
     Label:
-        text: 'Python to APK Converter'
-        font_size: '24sp'
-        size_hint_y: None
-        height: 40
+        id: target_label
+        text: "Press 'Start Test' to begin"
+        size_hint_y: 0.2
+        font_size: '20sp'
 
-    # Python File Selection Section
-    BoxLayout:
-        orientation: 'horizontal'
-        size_hint_y: None
-        height: 40
-        Label:
-            text: 'Python File:'
-            size_hint_x: None
-            width: 120
-        TextInput:
-            id: python_file_input
-            text: root.python_file
-            size_hint_x: None
-            width: 400
-        Button:
-            text: 'Browse'
-            on_press: root.browse_python_file()
+    TextInput:
+        id: input_field
+        multiline: False
+        size_hint_y: 0.2
+        font_size: '20sp'
+        disabled: True
+        on_text: root.on_text_change(self, self.text)
 
-    # Output Directory Selection Section
-    BoxLayout:
-        orientation: 'horizontal'
-        size_hint_y: None
-        height: 40
-        Label:
-            text: 'Output Directory:'
-            size_hint_x: None
-            width: 120
-        TextInput:
-            id: output_dir_input
-            text: root.output_dir
-            size_hint_x: None
-            width: 400
-        Button:
-            text: 'Browse'
-            on_press: root.browse_output_dir()
+    Label:
+        id: stats_label
+        text: "WPM: 0 | Accuracy: 0%"
+        size_hint_y: 0.2
 
-    # App Icon Selection Section
-    BoxLayout:
-        orientation: 'horizontal'
-        size_hint_y: None
-        height: 40
-        Label:
-            text: 'App Icon:'
-            size_hint_x: None
-            width: 120
-        TextInput:
-            id: icon_input
-            text: root.icon_path
-            size_hint_x: None
-            width: 400
-        Button:
-            text: 'Browse'
-            on_press: root.browse_icon()
-
-    # App Name Input
-    BoxLayout:
-        orientation: 'horizontal'
-        size_hint_y: None
-        height: 40
-        Label:
-            text: 'App Name:'
-            size_hint_x: None
-            width: 120
-        TextInput:
-            id: app_name_input
-            text: root.app_name
-            size_hint_x: None
-            width: 400
-
-    # Package Name Input
-    BoxLayout:
-        orientation: 'horizontal'
-        size_hint_y: None
-        height: 40
-        Label:
-            text: 'Package Name:'
-            size_hint_x: None
-            width: 120
-        TextInput:
-            id: package_name_input
-            text: root.package_name
-            size_hint_x: None
-            width: 400
-
-    # Progress Bar
-    ProgressBar:
-        id: progress_bar
-        size_hint_y: None
-        height: 30
-        max: 100
-        value: 0
-
-    # Convert Button
     Button:
-        text: 'Convert to APK'
-        size_hint_y: None
-        height: 40
-        on_press: root.convert_to_apk()
-
-    # Log Area (Text Output)
-    ScrollView:
-        size_hint: (1, None)
-        size_hint_y: 0.4
-        TextInput:
-            id: log_area
-            text: ''
-            readonly: True
-            height: self.minimum_height
-            font_size: '14sp'
-            size_hint_y: None
+        id: start_button
+        text: "Start Test"
+        size_hint_y: 0.2
+        on_press: root.start_test(self)
