@@ -17,11 +17,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Step 2: Set up build tools (install ccache, gcc, etc.)
+    # Step 2: Set up build tools (install ccache, gcc, cmake, etc.)
     - name: Set up build tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential ccache
+        sudo apt-get install -y build-essential ccache cmake
 
     # Step 3: Verify ccache and gcc installation
     - name: Verify ccache and gcc versions
@@ -47,12 +47,14 @@ jobs:
     # Step 7: Reinstall ccache and build tools if needed
     - name: Reinstall ccache and gcc (if needed)
       run: |
-        sudo apt-get install --reinstall -y ccache gcc
+        sudo apt-get install --reinstall -y ccache gcc cmake
 
-    # Step 8: Build the project (replace with your actual build commands)
-    - name: Build project
+    # Step 8: Configure and build with CMake
+    - name: Configure and build with CMake
       run: |
-        # Replace with your actual build command (e.g., make, cmake, etc.)
+        mkdir build
+        cd build
+        cmake ..
         make
 
     # Step 9: Show ccache statistics for debugging
