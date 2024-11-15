@@ -3,8 +3,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.spinner import Spinner
 from kivy.clock import Clock
-import random
 import time
 
 class TypingTest(BoxLayout):
@@ -14,12 +14,15 @@ class TypingTest(BoxLayout):
         self.padding = 20
         self.spacing = 10
         
-        # Sample word list (you can expand this)
-        self.words = [
-            "the", "be", "to", "of", "and", "a", "in", "that", "have", "I",
-            "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
-            "this", "but", "his", "by", "from", "they", "we", "say", "her", "she"
-        ]
+        # Define a set of predefined paragraphs
+        self.paragraphs = {
+            "Pangram 1": "The quick brown fox jumps over the lazy dog.",
+            "Pangram 2": "Pack my box with five dozen liquor jugs.",
+            "Pangram 3": "Jinxed wizards pluck ivy from the big quilt.",
+            "Pangram 4": "Sphinx of black quartz, judge my vow.",
+            "Lorem Ipsum": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "Shakespeare": "To be, or not to be, that is the question. Whether 'tis nobler in the mind to suffer the slings and arrows of outrageous fortune."
+        }
         
         # Initialize variables
         self.current_text = ""
@@ -57,16 +60,26 @@ class TypingTest(BoxLayout):
         )
         self.start_button.bind(on_press=self.start_test)
         self.add_widget(self.start_button)
+        
+        # Spinner to select a paragraph
+        self.paragraph_spinner = Spinner(
+            text="Select Paragraph",
+            values=list(self.paragraphs.keys()),  # List of paragraph names
+            size_hint_y=0.2
+        )
+        self.paragraph_spinner.bind(text=self.on_paragraph_select)
+        self.add_widget(self.paragraph_spinner)
 
-    def generate_text(self):
-        # Generate a random sequence of words
-        word_count = 10
-        selected_words = random.sample(self.words, word_count)
-        return " ".join(selected_words)
+    def on_paragraph_select(self, spinner, text):
+        # Update the current paragraph based on selection
+        self.current_text = self.paragraphs.get(text, "")
+        self.target_label.text = self.current_text
 
     def start_test(self, instance):
-        self.current_text = self.generate_text()
-        self.target_label.text = self.current_text
+        if not self.current_text:
+            self.target_label.text = "Please select a paragraph first!"
+            return
+        
         self.input_field.disabled = False
         self.input_field.text = ""
         self.start_time = time.time()
