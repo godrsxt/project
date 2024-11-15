@@ -1,10 +1,8 @@
 name: CI
 
+
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -13,39 +11,36 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout code
-        uses: actions/checkout@v3  # Upgraded to v3 for stability and performance
+        uses: actions/checkout@v2
 
-      # Step 2: Set Date Environment Variable
       - name: Get Date
         id: get-date
         run: |
           echo "DATE=$(date -u +'%Y%m%d')" >> $GITHUB_ENV
         shell: bash
 
-      # Step 3: Cache Buildozer global directory
       - name: Cache Buildozer global directory
-        uses: actions/cache@v3  # Upgraded to v3 for improved caching performance
+        uses: actions/cache@v2
         with:
           path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
 
-      # Step 4: Cache Buildozer directory
       - name: Cache Buildozer directory
-        uses: actions/cache@v3  # Upgraded to v3
+        uses: actions/cache@v2
         with:
           path: .buildozer
           key: ${{ runner.os }}-${{ env.DATE }}-${{ hashFiles('buildozer.spec') }}
 
-      # Step 5: Build with Buildozer
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v2  # Upgraded to v2 to match latest Buildozer action version
+        uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
           command: buildozer android debug
           buildozer_version: stable
 
-      # Step 6: Upload build artifacts
-      - name: Upload build artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: ${{ steps.buildozer.outputs.filename }}
