@@ -3,10 +3,10 @@ name: Build APK with Buildozer
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger on pull requests to the main branch
+      - main
 
 jobs:
   build:
@@ -19,32 +19,28 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8  # Use the appropriate Python version for your project
+          python-version: 3.8
 
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y python3-pip python3-setuptools python3-dev build-essential
           sudo apt install -y libgl1-mesa-glx libgles2-mesa libssl-dev libsqlite3-dev
+          sudo apt install -y clang python3-dev libffi-dev zlib1g-dev libbz2-dev
+          sudo apt install -y openjdk-8-jdk
+          sudo apt install -y git
           pip install --upgrade pip
           pip install cython==0.29.21
           pip install buildozer
 
-      - name: Set up Buildozer
+      - name: Clear Buildozer cache
         run: |
-          sudo apt update
-          sudo apt install -y openjdk-8-jdk
-          sudo apt install -y zlib1g-dev libncurses5-dev libbz2-dev libreadline-dev
-          sudo apt install -y libsqlite3-dev libssl-dev libgdbm-dev libnss3-dev
-          sudo apt install -y liblzma-dev tk-dev libxml2-dev libxmlsec1-dev
-          sudo apt install -y libffi-dev liblzma-dev
-          sudo apt install -y git
+          rm -rf ~/.buildozer
 
       - name: Build APK
         run: |
           buildozer -v android debug
-          # If you want to build release APK, use `buildozer android release`
-        
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
