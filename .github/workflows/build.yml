@@ -1,46 +1,68 @@
-name: CI
-
+name: Build and Troubleshoot
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest  # Change to your preferred runner if necessary
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    # Step 1: Checkout repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "DATE=$(date -u +'%Y%m%d')" >> $GITHUB_ENV
-        shell: bash
+    # Step 2: Set up build tools (install ccache, gcc, etc.)
+    - name: Set up build tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential ccache
 
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v2
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
+    # Step 3: Verify ccache and gcc installation
+    - name: Verify ccache and gcc versions
+      run: |
+        ccache --version
+        gcc --version
+        clang --version || true  # Optional: if you're using clang
 
-      - name: Cache Buildozer directory
-        uses: actions/cache@v2
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ env.DATE }}-${{ hashFiles('buildozer.spec') }}
+    # Step 4: Clear any existing ccache to avoid corruption
+    - name: Clear ccache cache
+      run: ccache -C
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: stable
+    # Step 5: Check disk space (optional, to ensure there are no space issues)
+    - name: Check disk space
+      run: df -h
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+    # Step 6: Set environment variables (optional, if needed)
+    - name: Set environment variables
+      run: |
+        echo "CC=/usr/bin/gcc" >> $GITHUB_ENV
+        echo "CXX=/usr/bin/g++" >> $GITHUB_ENV
+
+    # Step 7: Reinstall ccache and build tools if needed
+    - name: Reinstall ccache and gcc (if needed)
+      run: |
+        sudo apt-get install --reinstall -y ccache gcc
+
+    # Step 8: Build the project (replace with your actual build commands)
+    - name: Build project
+      run: |
+        # Replace with your actual build command (e.g., make, cmake, etc.)
+        make
+
+    # Step 9: Show ccache statistics for debugging
+    - name: Show ccache stats
+      run: |
+        ccache -s
+
+    # Optional: Archive build logs for debugging
+    - name: Upload build logs as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-logs
+        path: ./build_logs  # Adjust path based on where your build logs are saved
