@@ -4,7 +4,7 @@
 title = mOnkeytype
 
 # (str) Package name
-package.name = apptype
+package.name = monkeytyp3
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = com.type
@@ -22,7 +22,7 @@ version = 0.1
 requirements = python3,kivy==2.3.0,kivymd,pillow,pyjnius
 
 # (list) Supported orientations
-orientation = portrait
+orientation = landscape
 
 # Android specific
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE
