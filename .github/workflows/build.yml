@@ -2,6 +2,10 @@
 name: KivyMD Android CI
 
 on:
+  push:
+    branches: [ main ] # Trigger on push to the main branch
+  
+  workflow_dispatch: # Allows manual trigger from GitHub UI
   # ... (omitted for brevity)
 
 jobs:
