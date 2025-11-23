@@ -27,7 +27,7 @@ jobs:
         id: buildozer
         with:
           # --- THIS IS THE CRITICAL CHANGE ---
-          python-version: 3.10 # <-- MUST BE A MODERN, SUPPORTED VERSION (3.10 or 3.11)
+          python-version: 3.10.0 # <-- MUST BE A MODERN, SUPPORTED VERSION (3.10 or 3.11)
           # ------------------------------------
           buildozer-cmd: buildozer -v android debug 
 
