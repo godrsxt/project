@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    # Use the latest Ubuntu runner, which provides the necessary Linux environment
+    # Uses the latest Ubuntu runner (currently 24.04)
     runs-on: ubuntu-latest
 
     steps:
@@ -17,6 +17,13 @@ jobs:
         # Action to pull your code into the runner
         uses: actions/checkout@v4
 
+      # 🩹 FIX for "E: Unable to locate package libtinfo5" NDK dependency issue
+      - name: 🩹 Install libncurses5 for NDK compatibility
+        run: |
+          sudo apt-get update
+          # libncurses5 installs the older libtinfo5 dependency required by the NDK
+          sudo apt-get install -y libncurses5
+      
       - name: ⚙️ Cache Buildozer Dependencies
         # Caching the .buildozer directory dramatically speeds up subsequent builds
         uses: actions/cache@v4
@@ -29,8 +36,8 @@ jobs:
         uses: digreatbrian/buildozer-action@v2 
         id: buildozer
         with:
-          # IMPORTANT: Use a supported Python version (3.10 or 3.11)
-          python-version: 3.11
+          # ✅ CORRECTED: Using supported Python 3.11, which you confirmed worked
+          python-version: 3.11 
           # Command to run Buildozer; 'android debug' creates the APK
           buildozer-cmd: buildozer -v android debug 
 
