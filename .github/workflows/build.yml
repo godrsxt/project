@@ -24,14 +24,11 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
 
       - name: 🏗️ Build APK with Buildozer Action
-        # Using a proven buildozer action for the complex Android build environment
         uses: digreatbrian/buildozer-action@v2 
-        id: buildozer
         with:
-          # Match the Python version required by KivyMD
-          python-version: 3.10
-          # Command to execute: android debug creates a non-signed APK for testing
+          python-version: 3.10 # <-- USE 3.10 or 3.11
           buildozer-cmd: buildozer -v android debug 
+ 
 
       - name: ⬆️ Upload Artifact (APK)
         uses: actions/upload-artifact@v4
