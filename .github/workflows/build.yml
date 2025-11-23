@@ -1,1 +1,41 @@
 
+# .github/workflows/build.yml
+name: KivyMD Android CI
+
+on:
+  push:
+    branches: [ main ] # Trigger on push to the main branch
+  
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v4
+
+      # ⚙️ Cache buildozer dependencies for faster subsequent builds
+      - name: Cache Buildozer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: .buildozer
+          key: ${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+
+      - name: 🏗️ Build APK with Buildozer Action
+        # Using a proven buildozer action for the complex Android build environment
+        uses: digreatbrian/buildozer-action@v2 
+        id: buildozer
+        with:
+          # Match the Python version required by KivyMD
+          python-version: 3.10
+          # Command to execute: android debug creates a non-signed APK for testing
+          buildozer-cmd: buildozer -v android debug 
+
+      - name: ⬆️ Upload Artifact (APK)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KivyMD-Quiz-APK
+          # The APK is guaranteed to be in the 'bin' directory by buildozer
+          path: ./bin/*.apk 
