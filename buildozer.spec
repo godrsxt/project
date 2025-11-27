@@ -1,48 +1,52 @@
 [app]
 
 # (str) Title of your application
-title = Mobile Quiz Game
+title = GitHub Action Demo
 
 # (str) Package name
-package.name = mobilequizgame
+package.name = ghdemo
 
-# (str) Package domain (used for the apk package name)
-package.domain = com.yourcompany
+# (str) Package domain (needed for android/ios packaging)
+package.domain = org.test
 
-# (str) App version
-version = 0.1
-
-# (list) Application requirements (KivyMD depends on Kivy and Pillow)
-requirements = python3,kivy==2.2.1,kivymd==1.1.1,pillow
-
-# (str) Main application file relative to the current directory.
+# (str) Source code where the main.py live
 source.dir = .
 
-# (list) Python files to exclude from the source.
-source.exclude_exts = spec
+# (list) Source files to include (let empty to include all the files)
+source.include_exts = py,png,jpg,kv,atlas
 
-# (list) List of exclusions for standard Android build files
-android.exclude_exts = png,jpg,jpeg
+# (list) Application requirements
+# Comma separated e.g. requirements = sqlite3,kivy
+requirements = python3,kivy
 
-# (list) Permissions
-# Needed for standard Android mobile use
-android.permissions = INTERNET
+# (str) Application versioning (method 1)
+version = 0.1
 
-# (int) The Android SDK version to target
-android.api = 33
+# (int) Target Android API, should be as high as possible.
+android.api = 31
 
-# (int) Minimum Android API required
+# (int) Minimum API your APK will support.
 android.minapi = 21
 
-# (str) The directory to store the APK in
-bin.dir = bin
+# (bool) Use --private data storage (True) or --dir public storage (False)
+android.private_storage = True
 
-# (str) The name of the resulting APK file
-apk.name = %(title)s-%(version)s-debug.apk
+# (str) Android NDK version to use
+android.ndk = 25b
 
-# --------------------------------------------------
-# Advanced Buildozer Configuration (Leave as default)
-# --------------------------------------------------
+# (bool) Skip byte compile for .py files
+android.skip_byte_compile_py = 1
+
+# (str) The format used to package the app for release mode (aab or apk or aar).
+android.release_artifact = apk
+
+# (str) The format used to package the app for debug mode (apk or aar).
+android.debug_artifact = apk
 
 [buildozer]
+
+# (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
 log_level = 2
+
+# (int) Display warning if buildozer is run as root (0 = False, 1 = True)
+warn_on_root = 0
