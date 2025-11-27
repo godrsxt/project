@@ -1,56 +1,30 @@
-# .github/workflows/build.yml
-name: KivyMD Android CI
+name: Build Android APK
 
 on:
   push:
-    branches: [ main ] # Trigger on push to the 'main' branch
-  
-  workflow_dispatch: # Allows manual triggering
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
-    # Uses the latest Ubuntu runner (currently 24.04)
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⬇️ Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # 🩹 FIX: Manually install libncurses5/libtinfo5 packages.
-      # This resolves the NDK dependency error: "Unable to locate package libncurses5"
-      - name: 🩹 Install libncurses5/libtinfo5 Manually
-        run: |
-          echo "Updating apt lists and manually installing dependency..."
-          sudo apt-get update
-          # Download the required package directly from Ubuntu archives
-          # This URL is stable for the necessary compatibility package
-          wget http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/libncurses5_6.4-2ubuntu1_amd64.deb
-          # Install the package manually using dpkg
-          sudo dpkg -i libncurses5_6.4-2ubuntu1_amd64.deb
-          # Clean up the downloaded file
-          rm libncurses5_6.4-2ubuntu1_amd64.deb
-      
-      - name: ⚙️ Cache Buildozer Dependencies
-        # Caching speeds up subsequent builds by reusing previous downloads
-        uses: actions/cache@v4
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-
-      - name: 🏗️ Build APK with Buildozer Action
-        # This action handles the complex Android SDK/NDK environment setup
-        uses: digreatbrian/buildozer-action@v2 
+      # This action sets up the environment and runs buildozer
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
-          # Using Python 3.11, as you confirmed it works
-          python-version: 3.11 
-          # Command to start the Android build process
-          buildozer-cmd: buildozer -v android debug 
+          command: buildozer android debug
+          buildozer_version: master
 
-      - name: ⬆️ Upload Artifact (APK)
-        # Uploads the final APK so you can download and install it
+      # This uploads the APK so you can download it from GitHub
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: KivyMD-Quiz-APK
-          # The APK is always placed in the 'bin' directory by buildozer
-          path: ./bin/*.apk 
+          name: my-app-apk
+          path: bin/*.apk
