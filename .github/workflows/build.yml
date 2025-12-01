@@ -1,24 +1,57 @@
-name: Build Web to APK
+name: Build HTML to APK (Cordova)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      # 1. Check out your game files
+      - uses: actions/checkout@v3
+        with:
+          path: game_files
 
-    # This action automatically wraps your HTML into an APK
-    - name: Web to APK
-      uses: darkshredder/website-to-apk-action@v1
-      with:
-        app-name: "MyGame"
-        build-folder-path: "." # The folder where your index.html is ('.' means root)
-        
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: debug-apk
-        path: apk/ # The action usually outputs to this folder
+      # 2. Setup Java (Required for Android build)
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Setup Node.js (Required for Cordova)
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 4. Install Cordova and Build the APK
+      - name: Install Cordova and Build
+        run: |
+          # Install Cordova globally
+          npm install -g cordova
+          
+          # Create a fresh Cordova project named "app"
+          cordova create app com.mygame.game MyGame
+          
+          # Remove the default Cordova "Hello World" files
+          rm -rf app/www/*
+          
+          # Copy YOUR game files into the Cordova www folder
+          # We exclude the hidden .git files and the app folder itself
+          cp -r game_files/* app/www/
+          
+          # Go into the app folder
+          cd app
+          
+          # Add Android platform
+          cordova platform add android
+          
+          # Build the APK (Debug version)
+          cordova build android --debug
+
+      # 5. Upload the APK to GitHub so you can download it
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-apk
+          path: app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
